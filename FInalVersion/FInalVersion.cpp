@@ -9,7 +9,7 @@
 
 
 // modes
-bool debugMode = true;
+bool debugMode = false;
 
 // binary conversion for 0-255 number for speed binary conversion
 uchar bins[256][8] = { {0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,1},{0,0,0,0,0,0,1,0},{0,0,0,0,0,0,1,1},{0,0,0,0,0,1,0,0},{0,0,0,0,0,1,0,1},{0,0,0,0,0,1,1,0},{0,0,0,0,0,1,1,1},{0,0,0,0,1,0,0,0},{0,0,0,0,1,0,0,1},{0,0,0,0,1,0,1,0},{0,0,0,0,1,0,1,1},{0,0,0,0,1,1,0,0},{0,0,0,0,1,1,0,1},{0,0,0,0,1,1,1,0},{0,0,0,0,1,1,1,1},{0,0,0,1,0,0,0,0},{0,0,0,1,0,0,0,1},{0,0,0,1,0,0,1,0},{0,0,0,1,0,0,1,1},{0,0,0,1,0,1,0,0},{0,0,0,1,0,1,0,1},{0,0,0,1,0,1,1,0},{0,0,0,1,0,1,1,1},{0,0,0,1,1,0,0,0},{0,0,0,1,1,0,0,1},{0,0,0,1,1,0,1,0},{0,0,0,1,1,0,1,1},{0,0,0,1,1,1,0,0},{0,0,0,1,1,1,0,1},{0,0,0,1,1,1,1,0},{0,0,0,1,1,1,1,1},{0,0,1,0,0,0,0,0},{0,0,1,0,0,0,0,1},{0,0,1,0,0,0,1,0},{0,0,1,0,0,0,1,1},{0,0,1,0,0,1,0,0},{0,0,1,0,0,1,0,1},{0,0,1,0,0,1,1,0},{0,0,1,0,0,1,1,1},{0,0,1,0,1,0,0,0},{0,0,1,0,1,0,0,1},{0,0,1,0,1,0,1,0},{0,0,1,0,1,0,1,1},{0,0,1,0,1,1,0,0},{0,0,1,0,1,1,0,1},{0,0,1,0,1,1,1,0},{0,0,1,0,1,1,1,1},{0,0,1,1,0,0,0,0},{0,0,1,1,0,0,0,1},{0,0,1,1,0,0,1,0},{0,0,1,1,0,0,1,1},{0,0,1,1,0,1,0,0},{0,0,1,1,0,1,0,1},{0,0,1,1,0,1,1,0},{0,0,1,1,0,1,1,1},{0,0,1,1,1,0,0,0},{0,0,1,1,1,0,0,1},{0,0,1,1,1,0,1,0},{0,0,1,1,1,0,1,1},{0,0,1,1,1,1,0,0},{0,0,1,1,1,1,0,1},{0,0,1,1,1,1,1,0},{0,0,1,1,1,1,1,1},{0,1,0,0,0,0,0,0},{0,1,0,0,0,0,0,1},{0,1,0,0,0,0,1,0},{0,1,0,0,0,0,1,1},{0,1,0,0,0,1,0,0},{0,1,0,0,0,1,0,1},{0,1,0,0,0,1,1,0},{0,1,0,0,0,1,1,1},{0,1,0,0,1,0,0,0},{0,1,0,0,1,0,0,1},{0,1,0,0,1,0,1,0},{0,1,0,0,1,0,1,1},{0,1,0,0,1,1,0,0},{0,1,0,0,1,1,0,1},{0,1,0,0,1,1,1,0},{0,1,0,0,1,1,1,1},{0,1,0,1,0,0,0,0},{0,1,0,1,0,0,0,1},{0,1,0,1,0,0,1,0},{0,1,0,1,0,0,1,1},{0,1,0,1,0,1,0,0},{0,1,0,1,0,1,0,1},{0,1,0,1,0,1,1,0},{0,1,0,1,0,1,1,1},{0,1,0,1,1,0,0,0},{0,1,0,1,1,0,0,1},{0,1,0,1,1,0,1,0},{0,1,0,1,1,0,1,1},{0,1,0,1,1,1,0,0},{0,1,0,1,1,1,0,1},
@@ -145,7 +145,7 @@ int** getRuleMatrix6x6() {
     output[2][1] = 13;
     output[2][2] = 25;
     output[2][3] = 29;
-    output[2][4] = 5;
+    output[2][4] = 13;
     output[2][5] = 28;
 
     output[3][0] = 25;
@@ -162,12 +162,12 @@ int** getRuleMatrix6x6() {
     output[4][4] = 13;
     output[4][5] = 28;
 
-    output[4][0] = 25;
-    output[4][1] = 13;
-    output[4][2] = 25;
-    output[4][3] = 29;
-    output[4][4] = 13;
-    output[4][5] = 28;
+    output[5][0] = 25;
+    output[5][1] = 13;
+    output[5][2] = 25;
+    output[5][3] = 29;
+    output[5][4] = 13;
+    output[5][5] = 28;
     return output;
 }
 
@@ -239,16 +239,34 @@ cv::Mat getImage(uchar** binaryImage,int height,int width){
     }
     return output;
 }
+void ArrayLeftShift(uchar* array, int length) {
+    uchar zeroVal = array[0];
+    for (int i = 0; i < length; i++) {
+        if(i-1 > -1){
+            array[i - 1] = array[i];
+        }
+    }
+    array[length - 1] = zeroVal;
+}
+void ArrayRightShift(uchar* array, int length) {
+    uchar nVal = array[length - 1];
+    for (int i = length-1; i >= 0; i--) {
+        if (i + 1 < length) {
+            array[i + 1] = array[i];
+        }
+    }
+    array[0] = nVal;
+}
 
 void rowLeftShift(uchar** binaryImage, int height, int width){
     for (int i = 0; i < height; i++) {
         uchar* rowBuffer = new uchar[width];
-        for (int j = 1; j < width; j++) {
-            rowBuffer[j - 1] = binaryImage[i][j];
+        for (int j = 0; j < width; j++) {
+            rowBuffer[j] = binaryImage[i][j];
         }
-        rowBuffer[width - 1] = binaryImage[i][0];
-        for (int cj = 0; cj < width; cj++) {
-            binaryImage[i][cj] = rowBuffer[cj];
+        ArrayLeftShift(rowBuffer, width);
+        for (int j = 0; j < width; j++) {
+            binaryImage[i][j] = rowBuffer[j];
         }
         free(rowBuffer);
     }
@@ -256,12 +274,12 @@ void rowLeftShift(uchar** binaryImage, int height, int width){
 void colLeftShift(uchar** binaryImage, int height, int width) {
     for (int i = 0; i < width; i++) {
         uchar* colBuffer = new uchar[height];
-        for (int j = 1; j < height; j++) {
-            colBuffer[j - 1] = binaryImage[j][i];
+        for (int j = 0; j < height; j++) {
+            colBuffer[j] = binaryImage[j][i];
         }
-        colBuffer[height - 1] = binaryImage[i][0];
-        for (int cj = 0; cj < height; cj++) {
-            binaryImage[cj][i] = colBuffer[cj];
+        ArrayLeftShift(colBuffer, height);
+        for (int j = 0; j < height; j++) {
+            binaryImage[j][i] = colBuffer[j];
         }
         free(colBuffer);
     }
@@ -270,30 +288,28 @@ void colLeftShift(uchar** binaryImage, int height, int width) {
 void rowRightShift(uchar** binaryImage, int height, int width) {
     for (int i = 0; i < height; i++) {
         uchar* rowBuffer = new uchar[width];
-        int rowCount = 1;
-        rowBuffer[0] = binaryImage[i][width - 1];
-        for (int j = 0; j < width - 1; j++) {
-            rowBuffer[rowCount] = binaryImage[i][j];
-            rowCount++;
+        for (int j = 0; j < width; j++) {
+            rowBuffer[j] = binaryImage[i][j];
         }
-        for (int rj = 0; rj < width; rj++) {
-            binaryImage[i][rj]= rowBuffer[rj];
+        ArrayRightShift(rowBuffer, width);
+        for (int j = 0; j < width; j++) {
+            binaryImage[i][j]= rowBuffer[j];
         }
+        free(rowBuffer);
     }
 }
 
 void colRightShift(uchar** binaryImage, int height, int width){
     for (int i = 0; i < width; i++) {
         uchar* colBuffer = new uchar[height];
-        int colCount = 1;
-        colBuffer[0] = binaryImage[i][height - 1];
-        for (int j = 0; j < height - 1; j++) {
-            colBuffer[colCount] = binaryImage[i][j];
-            colCount++;
+        for (int j = 0; j < height; j++) {
+            colBuffer[j] = binaryImage[j][i];
         }
-        for (int cj = 0; cj < height; cj++) {
-            binaryImage[i][cj] = colBuffer[cj];
+        ArrayRightShift(colBuffer, height);
+        for (int j = 0; j < height; j++) {
+            binaryImage[j][i] = colBuffer[j];
         }
+        free(colBuffer);
     }
 }
 
@@ -304,8 +320,11 @@ void maskingLeftShift(uchar** binaryImage, int height, int width) {
     colLeftShift(binaryImage, height, width);
 }
 void maskingRighttShift(uchar** binaryImage, int height, int width) {
-    // row Shif
+    // col Shift
+    colRightShift(binaryImage, height, width);
+    // row Shift
     rowRightShift(binaryImage, height, width);
+    
 }
 
 // gpu env
@@ -368,11 +387,11 @@ void GpuEnvrEnc(uchar** binaryImage, int height, int width, int** ruleMatrix, in
         }
     }
 
-    //  maskingLeftShif(binaryImage, height, width);
+    maskingLeftShift(binaryImage, height, width);
 }
 void GpuEnvrDec(uchar** binaryImage, int height, int width, int** ruleMatrix, int nc) {
 
-    //  maskingRighttShif(binaryImage, height, width);
+      maskingRighttShift(binaryImage, height, width);
     
     for (int subRow = 0; subRow < height; subRow += windowSize) {
         for (int subCol = 0; subCol < width; subCol += windowSize) {
@@ -400,7 +419,7 @@ int main()
     if(debugMode==false)cv::resize(image, resizeImage, cv::Size(100, 100), cv::INTER_LINEAR);
     
     //                                  get converted
-    //uchar** binaryImage = getBinaryImage(resizeImage);
+    uchar** binaryImage = getBinaryImage(resizeImage);
     //std::cout << "binary Image" << std::endl;
     //print2DArrayImage(binaryImage, resizeImage.rows, resizeImage.cols * 24);
 
@@ -410,44 +429,23 @@ int main()
 
      
     //                                  Encription
-    //GpuEnvrEnc(binaryImage, resizeImage.rows, resizeImage.cols * 24,getRuleMatrix5x5(),89);
+    GpuEnvrEnc(binaryImage, resizeImage.rows, resizeImage.cols * 24,getRuleMatrix5x5(),89);
     //std::cout << "binary Image Transpose" << std::endl;
     //print2DArrayImage(binaryImage, resizeImage.rows, resizeImage.cols * 24);
-    //showImage("enc", getImage(binaryImage, resizeImage.rows, resizeImage.cols * 24));
+    showImage("enc", getImage(binaryImage, resizeImage.rows, resizeImage.cols * 24));
     
     //                                  decryption
-    //GpuEnvrDec(binaryImage, resizeImage.rows, resizeImage.cols * 24, getRuleMatrix5x5(), 31);
+    GpuEnvrDec(binaryImage, resizeImage.rows, resizeImage.cols * 24, getRuleMatrix5x5(), 31);
     //std::cout << "binary Image Transpose" << std::endl;
     //print2DArrayImage(binaryImage, resizeImage.rows, resizeImage.cols * 24);
-    //showImage("dec", getImage(binaryImage, resizeImage.rows, resizeImage.cols * 24));
+    showImage("dec", getImage(binaryImage, resizeImage.rows, resizeImage.cols * 24));
     
     //                                  Original Image
-    //  cv::Mat img = getImage(binaryImage, resizeImage.rows, resizeImage.cols * 24);
-    //  showImage("real", resizeImage);
+      showImage("real", resizeImage);
     
     // wait for oo
-    //  cv::waitKey(0);
+      cv::waitKey(0);
 
-    // debug testing leftShif and right shif module
-    uchar** testArray = new uchar * [3];
-    for (int i = 0; i < 3; i++) testArray[i] = new uchar[3];
-
-    testArray[0][0] = 1;
-    testArray[0][1] = 2;
-    testArray[0][2] = 3;
-
-    testArray[1][0] = 4;
-    testArray[1][1] = 5;
-    testArray[1][2] = 6;
-
-    testArray[2][0] = 7;
-    testArray[2][1] = 8;
-    testArray[2][2] = 9;
-
-
-
-    print2DArrayImage(testArray, 3, 3);
-    rowRightShift(testArray, 3, 3);
-    print2DArrayImage(testArray, 3, 3);
+    
     
 }
